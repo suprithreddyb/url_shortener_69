@@ -1,34 +1,39 @@
 import React, { useEffect, useState } from 'react'
 
 import Service from '../utils/http'
-import { Avatar, Center, Stack, Text } from '@mantine/core';
+import { Avatar, Center, Container, Stack, Text } from '@mantine/core';
 
 const service = new Service();
 
 export default function Profile() {
-    
-    const [ profileData, setProfileData ] = useState( "null" )
-    async function getProfileData(){
-        let data = await service.get( "user/me");
-        setProfileData( data );
-        console.log( data ); //only to check
+
+    const [profileData, setProfileData] = useState("null")
+    const [date, setDate] = useState(new Date(""))
+    async function getProfileData() {
+        let data = await service.get("user/me");
+        setProfileData(data);
+        setDate(new Date(data?.createdAt));
+        console.log(data); //only to check
     }
 
-    useEffect( () =>{
+    useEffect(() => {
         getProfileData();
-    }, [] )
+    }, [])
+
+    const aSrc = profileData ? profileData.avatar : undefined;
 
     return (
         <div>
-            <Center>
-                <Stack>
-                <Avatar size="xl" src={profileData?.avatar} alt="it's me" />
-                <Text size="xl" fw={700}>{profileData?.name}</Text>
-                <Text c="dimmed">{profileData?.email}</Text>
-                <Text ><strong>User ID: </strong>{profileData?._id} </Text>
+            <Container>
+                <Stack h={300} align="center" justify="center" gap="md">
+                    <Avatar size="xl" src={aSrc} alt="it's me" />
+                    <Text  size={"xl"} fw={700}>{profileData?.name}</Text>
+                    <Text c={"dimmed"}>{profileData?.email}</Text>
+                    <Text ><strong>User ID: </strong>{profileData?._id} </Text>
+                    <Text> <strong>Account Created: </strong>{date.toLocaleDateString()}, {date.toLocaleTimeString()}</Text>
                 </Stack>
-            </Center>
-            
+            </Container>
+
 
         </div>
     )
